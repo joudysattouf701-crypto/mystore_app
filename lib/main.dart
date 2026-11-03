@@ -1,5 +1,6 @@
 import 'package:mystore/core/theme/app_theme.dart';
 import 'package:mystore/features/authentication/auth_session.dart';
+import 'package:mystore/features/cart/cart_controller.dart';
 import 'package:mystore/features/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -10,6 +11,9 @@ Future<void> main() async {
 
   // استرجاع الجلسة المحفوظة قبل تشغيل التطبيق لتحديد شاشة البداية
   await Get.putAsync(() => AuthSession().init());
+
+  // السلة مشتركة بين كل الشاشات وتبقى طوال تشغيل التطبيق
+  Get.put(CartController(), permanent: true);
 
   runApp(const MyApp());
 }

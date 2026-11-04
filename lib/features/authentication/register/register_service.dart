@@ -5,6 +5,7 @@ import 'register_model.dart';
 class RegisterService {
   final ApiClient _api = ApiClient.instance;
 
+  // الدور دائماً customer من جهة السيرفر، فلا نرسل role
   Future<RegisterModel> registerUser({
     required String name,
     required String email,

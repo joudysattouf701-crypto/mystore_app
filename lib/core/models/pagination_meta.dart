@@ -1,3 +1,4 @@
+// بيانات الترقيم المشتركة بين القوائم (المنتجات، الطلبات، الإشعارات)
 class PaginationMeta {
   final int currentPage;
   final int perPage;

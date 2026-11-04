@@ -2,6 +2,7 @@ import 'package:mystore/core/theme/app_colors.dart';
 import 'package:mystore/core/widgets/skeleton.dart';
 import 'package:flutter/material.dart';
 
+// صورة المنتج من الرابط، مع مربع تحميل أثناء الجلب وأيقونة بديلة إن فشلت
 class ProductImage extends StatelessWidget {
   final String url;
 

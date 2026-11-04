@@ -3,6 +3,7 @@ import 'package:mystore/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+// شكل موحّد لإشعارات النجاح والخطأ في كل التطبيق
 class AppSnackbar {
   static void success(String message, {String title = 'تم'}) {
     _show(title, message, AppColors.success, Icons.check_circle_outline);
@@ -12,6 +13,7 @@ class AppSnackbar {
     _show(title, message, AppColors.error, Icons.error_outline);
   }
 
+  // خطأ قادم من السيرفر. انتهاء الجلسة (401) له إشعاره الخاص فلا نكرره
   static void apiError(ApiException e) {
     if (e.statusCode == 401) return;
     error(e.displayMessage);

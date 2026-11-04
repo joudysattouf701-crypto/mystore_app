@@ -1,6 +1,7 @@
 import 'package:mystore/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
+// حالة الشاشة الفارغة أو الخطأ: أيقونة وعنوان ورسالة، مع زر اختياري
 class EmptyState extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -62,6 +63,7 @@ class EmptyState extends StatelessWidget {
   }
 }
 
+// حالة فشل التحميل مع زر إعادة المحاولة
 class ErrorState extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;

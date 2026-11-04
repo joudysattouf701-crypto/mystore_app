@@ -1,10 +1,12 @@
 import 'package:mystore/features/products/categories/categories_model.dart';
 
+// المنتج كما يرجعه السيرفر (ضمن القائمة وضمن التفاصيل)
 class ProductModel {
   final int id;
   final String name;
   final String? description;
 
+  // السعر بالليرة السورية
   final int price;
   final CategoryModel? category;
   final String imageUrl;

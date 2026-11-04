@@ -2,6 +2,10 @@ import 'package:mystore/core/theme/app_colors.dart';
 import 'package:mystore/core/widgets/empty_state.dart';
 import 'package:mystore/core/widgets/skeleton.dart';
 import 'package:mystore/features/authentication/auth_session.dart';
+import 'package:mystore/features/cart/cart_screen.dart';
+import 'package:mystore/features/cart/cart_widgets/cart_badge.dart';
+import 'package:mystore/features/notifications/notifications_list/notifications_screen.dart';
+import 'package:mystore/features/orders/orders_list/orders_screen.dart';
 import 'package:mystore/features/products/product_details/product_details_screen.dart';
 import 'package:mystore/features/products/products_widgets/category_chips.dart';
 import 'package:mystore/features/products/products_widgets/product_card.dart';
@@ -9,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'products_controller.dart';
 
+// الشاشة الرئيسية للزبون: التحية، شريط التصنيفات، وشبكة المنتجات
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
 
@@ -19,6 +24,7 @@ class ProductsScreen extends StatefulWidget {
 class _ProductsScreenState extends State<ProductsScreen> {
   final ProductsController controller = Get.put(ProductsController());
 
+  // شبكة بعمودين على الموبايل، وتزيد الأعمدة على الشاشات العريضة
   static const SliverGridDelegate _gridDelegate =
       SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 220,
@@ -27,6 +33,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
         childAspectRatio: 0.68,
       );
 
+  // عند الاقتراب من آخر القائمة نحمّل الصفحة التالية
   bool _onScroll(ScrollNotification notification) {
     if (notification.metrics.extentAfter < 400) controller.loadMore();
     return false;
@@ -96,22 +103,49 @@ class _ProductsScreenState extends State<ProductsScreen> {
               ],
             ),
           ),
-          Material(
-            color: AppColors.surface,
-            shape: const CircleBorder(
-              side: BorderSide(color: AppColors.border),
-            ),
-            child: IconButton(
-              tooltip: 'تسجيل الخروج',
-              onPressed: AuthSession.to.logout,
-              icon: const Icon(
-                Icons.logout_rounded,
-                size: 20,
-                color: AppColors.text,
-              ),
+          _buildHeaderButton(
+            tooltip: 'الإشعارات',
+            icon: Icons.notifications_none_rounded,
+            onPressed: () => Get.to(() => const NotificationsScreen()),
+          ),
+          const SizedBox(width: 8),
+          _buildHeaderButton(
+            tooltip: 'طلباتي',
+            icon: Icons.receipt_long_outlined,
+            onPressed: () => Get.to(() => const OrdersScreen()),
+          ),
+          const SizedBox(width: 8),
+          CartBadge(
+            child: _buildHeaderButton(
+              tooltip: 'السلة',
+              icon: Icons.shopping_bag_outlined,
+              onPressed: () => Get.to(() => const CartScreen()),
             ),
           ),
+          const SizedBox(width: 8),
+          // زر الخروج مؤقت هنا لحين إضافة صفحة الحساب
+          _buildHeaderButton(
+            tooltip: 'تسجيل الخروج',
+            icon: Icons.logout_rounded,
+            onPressed: AuthSession.to.logout,
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderButton({
+    required String tooltip,
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    return Material(
+      color: AppColors.surface,
+      shape: const CircleBorder(side: BorderSide(color: AppColors.border)),
+      child: IconButton(
+        tooltip: tooltip,
+        onPressed: onPressed,
+        icon: Icon(icon, size: 20, color: AppColors.text),
       ),
     );
   }
@@ -124,7 +158,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
           sliver: SliverGrid(
             gridDelegate: _gridDelegate,
             delegate: SliverChildBuilderDelegate(
-              (context, index) => const Shimmer(child: ProductCardSkeleton()),
+              (context, index) =>
+                  const Shimmer(child: ProductCardSkeleton()),
               childCount: 6,
             ),
           ),

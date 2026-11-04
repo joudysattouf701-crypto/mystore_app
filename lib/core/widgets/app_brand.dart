@@ -1,6 +1,8 @@
 import 'package:mystore/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
+// شعار مؤقت (أيقونة متجر) لحين تجهيز شعار المتجر كصورة.
+// light: نسخة بيضاء تُستخدم فوق الخلفيات الملونة
 class AppLogo extends StatelessWidget {
   final double size;
   final bool light;
@@ -38,6 +40,7 @@ class AppLogo extends StatelessWidget {
             color: light ? AppColors.primary : Colors.white,
             size: size * 0.52,
           ),
+          // نقطة كهرمانية صغيرة تميّز الشعار
           PositionedDirectional(
             top: size * 0.16,
             end: size * 0.16,

@@ -9,6 +9,7 @@ class TokenStorage {
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
+  // نسخة في الذاكرة حتى لا نقرأ من التخزين مع كل طلب
   String? accessToken;
   String? userJson;
 
@@ -17,6 +18,7 @@ class TokenStorage {
       accessToken = await _storage.read(key: _accessKey);
       userJson = await _storage.read(key: _userKey);
     } catch (_) {
+      // تخزين تالف أو غير مقروء: نعتبر المستخدم غير مسجل الدخول
       accessToken = null;
       userJson = null;
     }

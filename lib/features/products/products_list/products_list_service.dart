@@ -5,6 +5,7 @@ import 'products_list_model.dart';
 class ProductsListService {
   final ApiClient _api = ApiClient.instance;
 
+  // القائمة عامة لا تحتاج توكن. تصنيف غير موجود يرجع قائمة فارغة وليس خطأ
   Future<ProductsListModel> getProducts({
     int? categoryId,
     int page = 1,

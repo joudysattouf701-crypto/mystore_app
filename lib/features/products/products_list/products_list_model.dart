@@ -1,6 +1,7 @@
 import 'package:mystore/core/models/pagination_meta.dart';
 import 'package:mystore/features/products/product_details/product_details_model.dart';
 
+// صفحة واحدة من قائمة المنتجات. الرد: { data: [Product], meta: {...} }
 class ProductsListModel {
   final List<ProductModel> products;
   final PaginationMeta meta;

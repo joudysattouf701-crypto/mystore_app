@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mystore/core/utils/app_validators.dart';
 
+// حقل الإدخال الموحّد: عنوان فوق الحقل، وزر إظهار/إخفاء لكلمات المرور
 class AppTextField extends StatefulWidget {
   final TextEditingController controller;
   final String label;
@@ -10,10 +11,13 @@ class AppTextField extends StatefulWidget {
   final IconData icon;
   final bool isPassword;
 
+  // الحقل الاختياري لا يُفرض ملؤه ويظهر بجانب عنوانه "اختياري"
   final bool optional;
 
+  // للأرقام والإيميل: الكتابة من اليسار لليمين حتى في الواجهة العربية
   final bool ltrInput;
 
+  // حقل للعرض فقط لا يمكن تعديله
   final bool enabled;
   final int maxLines;
   final TextInputType keyboardType;
@@ -21,6 +25,7 @@ class AppTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final String? Function(String?)? validator;
 
+  // يُستدعى عند الضغط على زر الإرسال في لوحة المفاتيح
   final ValueChanged<String>? onSubmitted;
 
   const AppTextField({

@@ -2,11 +2,14 @@ import 'package:mystore/core/theme/app_colors.dart';
 import 'package:mystore/core/widgets/app_brand.dart';
 import 'package:flutter/material.dart';
 
+// الهيكل المشترك لشاشات المصادقة: خلفية فاتحة بزخارف خضراء خفيفة،
+// الشعار والعنوان في الأعلى، ثم النموذج، ثم رابط التنقل في الأسفل
 class AuthScaffold extends StatelessWidget {
   final String title;
   final String? subtitle;
   final Widget child;
 
+  // رابط أسفل النموذج للتنقل بين الدخول وإنشاء الحساب
   final Widget? footer;
 
   const AuthScaffold({
@@ -25,6 +28,7 @@ class AuthScaffold extends StatelessWidget {
       backgroundColor: AppColors.surface,
       body: Stack(
         children: [
+          // دوائر زخرفية في زاوية الشاشة
           PositionedDirectional(
             top: -140,
             end: -100,
@@ -45,6 +49,7 @@ class AuthScaffold extends StatelessWidget {
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
               child: Center(
+                // عرض أقصى حتى لا يتمدد النموذج على الشاشات العريضة
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 440),
                   child: Column(

@@ -15,18 +15,21 @@ class ProductsController extends GetxController {
 
   var categories = <CategoryModel>[].obs;
 
+  // null يعني "الكل"
   var selectedCategoryId = Rxn<int>();
 
   var products = <ProductModel>[].obs;
   var isLoading = false.obs;
   var isLoadingMore = false.obs;
 
+  // رسالة فشل تحميل الصفحة الأولى، تظهر مع زر إعادة المحاولة
   var errorMessage = RxnString();
 
   int _page = 1;
   int _lastPage = 1;
   bool get hasMore => _page < _lastPage;
 
+  // رقم آخر طلب، حتى نتجاهل رد تصنيف قديم إن بدّل الزبون التصنيف بسرعة
   int _requestId = 0;
 
   @override
@@ -36,11 +39,12 @@ class ProductsController extends GetxController {
     fetchProducts();
   }
 
+  // فشل التصنيفات لا يمنع عرض المنتجات، فقط يختفي شريط التصنيفات
   Future<void> loadCategories() async {
     try {
       categories.value = await _categoriesService.getCategories();
     } on ApiException {
-      return;
+      // نبقي القائمة الحالية
     }
   }
 
@@ -51,6 +55,7 @@ class ProductsController extends GetxController {
     fetchProducts();
   }
 
+  // تحميل الصفحة الأولى من جديد (عند الفتح، وتبديل التصنيف، والسحب للتحديث)
   Future<void> fetchProducts() async {
     final int request = ++_requestId;
 
@@ -80,6 +85,7 @@ class ProductsController extends GetxController {
     }
   }
 
+  // الصفحة التالية عند الوصول لآخر القائمة
   Future<void> loadMore() async {
     if (isLoading.value || isLoadingMore.value || !hasMore) return;
     final int request = _requestId;

@@ -14,6 +14,7 @@ class ApiClient {
   final http.Client _http = http.Client();
   final TokenStorage _storage = TokenStorage.instance;
 
+  // يُستدعى عندما يرفض السيرفر التوكن (منتهي أو غير صالح)
   void Function()? onSessionExpired;
 
   Future<dynamic> get(
@@ -58,6 +59,7 @@ class ApiClient {
       token: auth ? _storage.accessToken : null,
     );
 
+    // السيرفر لا يدعم تجديد التوكن، فعند رفضه ننهي الجلسة مباشرة
     if (response.statusCode == 401 && auth) {
       await _storage.clear();
       onSessionExpired?.call();
@@ -81,6 +83,7 @@ class ApiClient {
       ..headers.addAll({
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        // التطبيق عربي فقط، فنطلب رسائل السيرفر بالعربية
         'Accept-Language': 'ar',
         if (token != null) 'Authorization': 'Bearer $token',
       });

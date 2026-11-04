@@ -6,6 +6,8 @@ import 'package:mystore/features/products/products_list/products_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+// شاشة البداية: الشعار يظهر بحركة ناعمة، وبنفس الوقت نتحقق من الجلسة المحفوظة،
+// ثم ننتقل للرئيسية أو لتسجيل الدخول
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -23,6 +25,7 @@ class _SplashScreenState extends State<SplashScreen>
     duration: _animationDuration,
   );
 
+  // الشعار أولاً، ثم الاسم والجملة التعريفية
   late final Animation<double> _logo = CurvedAnimation(
     parent: _controller,
     curve: const Interval(0, 0.65, curve: Curves.easeOutBack),
@@ -45,8 +48,13 @@ class _SplashScreenState extends State<SplashScreen>
     super.dispose();
   }
 
+  // ننتظر الحركة والتحقق من التوكن معاً. إن كان التوكن مرفوضاً تكون الجلسة
+  // قد انتقلت لشاشة الدخول بنفسها، فلا ننتقل مرة ثانية
   Future<void> _goNext() async {
-    await Future.wait([Future.delayed(_minStay), AuthSession.to.refreshUser()]);
+    await Future.wait([
+      Future.delayed(_minStay),
+      AuthSession.to.refreshUser(),
+    ]);
     if (!mounted) return;
 
     Get.offAll(

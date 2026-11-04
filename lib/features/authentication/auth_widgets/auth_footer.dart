@@ -1,6 +1,7 @@
 import 'package:mystore/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
+// سطر أسفل النموذج: سؤال ورابط، مثل "ليس لديك حساب؟ أنشئ حساباً"
 class AuthFooter extends StatelessWidget {
   final String question;
   final String action;

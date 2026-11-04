@@ -5,6 +5,7 @@ import 'me_model.dart';
 class MeService {
   final ApiClient _api = ApiClient.instance;
 
+  // بيانات المستخدم الحالي حسب التوكن المحفوظ. الرد: { data: User }
   Future<UserModel> getMe() async {
     final response = await _api.get(ApiEndpoints.me);
 

@@ -5,6 +5,7 @@ import 'package:mystore/features/products/product_details/product_details_model.
 import 'package:flutter/material.dart';
 import 'product_image.dart';
 
+// بطاقة منتج في الشبكة: الصورة في الأعلى ثم التصنيف والاسم والسعر
 class ProductCard extends StatelessWidget {
   final ProductModel product;
   final VoidCallback onTap;
@@ -81,6 +82,7 @@ class ProductCard extends StatelessWidget {
   }
 }
 
+// بطاقة هيكلية بنفس شكل بطاقة المنتج تظهر أثناء التحميل
 class ProductCardSkeleton extends StatelessWidget {
   const ProductCardSkeleton({super.key});
 

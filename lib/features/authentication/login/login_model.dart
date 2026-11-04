@@ -13,6 +13,7 @@ class LoginModel {
     required this.expiresIn,
   });
 
+  // الرد يأتي داخل data: { user, access_token, token_type, expires_in }
   factory LoginModel.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> data = json['data'] ?? {};
     return LoginModel(

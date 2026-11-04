@@ -2,6 +2,7 @@ import 'package:mystore/core/theme/app_colors.dart';
 import 'package:mystore/features/products/categories/categories_model.dart';
 import 'package:flutter/material.dart';
 
+// شريط أفقي للتصنيفات يبدأ بـ "الكل". الاختيار null يعني "الكل"
 class CategoryChips extends StatelessWidget {
   final List<CategoryModel> categories;
   final int? selectedId;

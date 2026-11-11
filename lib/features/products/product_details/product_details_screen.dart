@@ -173,6 +173,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+                if (product.hasStockInfo) ...[
+                  const SizedBox(height: 8),
+                  _buildStock(product.stock),
+                ],
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   child: Divider(color: AppColors.border, height: 1),
@@ -201,6 +205,27 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  // الكمية المتوفرة. null يعني أن المستودع لم يرد، والصفحة تبقى شغّالة
+  Widget _buildStock(int? stock) {
+    final String text;
+    final Color color;
+    if (stock == null) {
+      text = 'الكمية غير متاحة حالياً';
+      color = AppColors.textMuted;
+    } else if (stock <= 0) {
+      text = 'نفدت الكمية';
+      color = Colors.red;
+    } else {
+      text = 'الكمية المتوفرة: $stock';
+      color = Colors.green.shade700;
+    }
+
+    return Text(
+      text,
+      style: TextStyle(fontSize: 14, color: color, fontWeight: FontWeight.w600),
     );
   }
 

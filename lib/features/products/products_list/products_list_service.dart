@@ -14,6 +14,7 @@ class ProductsListService {
     final response = await _api.get(
       ApiEndpoints.products,
       auth: false,
+      etag: true,
       query: {
         if (categoryId != null) "category_id": '$categoryId',
         "page": '$page',

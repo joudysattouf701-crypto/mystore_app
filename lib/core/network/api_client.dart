@@ -17,11 +17,18 @@ class ApiClient {
   // يُستدعى عندما يرفض السيرفر التوكن (منتهي أو غير صالح)
   void Function()? onSessionExpired;
 
+  // كاش ETag في الذاكرة: الرابط الكامل (مع الـ query) -> آخر ETag وجسم الرد
+  // يُستخدم فقط للمنتجات وتفاصيل المنتج والتصنيفات
+  static const int _maxCacheEntries = 200;
+  final Map<String, _CachedResponse> _etagCache = {};
+
+  // etag: true يفعّل If-None-Match، فإن رد السيرفر 304 نرجع الجسم المحفوظ
   Future<dynamic> get(
     String path, {
     Map<String, String>? query,
     bool auth = true,
-  }) => _send('GET', path, query: query, auth: auth);
+    bool etag = false,
+  }) => _send('GET', path, query: query, auth: auth, etag: etag);
 
   Future<dynamic> post(
     String path, {
@@ -50,13 +57,18 @@ class ApiClient {
     Map<String, dynamic>? body,
     Map<String, String>? query,
     required bool auth,
+    bool etag = false,
   }) async {
+    final Uri url = _buildUrl(path, query);
+    final String cacheKey = url.toString();
+    final _CachedResponse? cached = etag ? _etagCache[cacheKey] : null;
+
     final response = await _request(
       method,
-      path,
+      url,
       body: body,
-      query: query,
       token: auth ? _storage.accessToken : null,
+      ifNoneMatch: cached?.etag,
     );
 
     // السيرفر لا يدعم تجديد التوكن، فعند رفضه ننهي الجلسة مباشرة
@@ -65,20 +77,43 @@ class ApiClient {
       onSessionExpired?.call();
     }
 
+    // 304: لم يتغير شيء ولم يُحمَّل أي جسم، نستخدم النسخة المحفوظة
+    if (response.statusCode == 304 && cached != null) {
+      _remember(cacheKey, cached);
+      return _decode(cached.body);
+    }
+
+    if (etag && response.statusCode == 200) {
+      final String? newEtag = response.headers['etag'];
+      if (newEtag != null && newEtag.isNotEmpty) {
+        _remember(cacheKey, _CachedResponse(newEtag, response.bodyBytes));
+      } else {
+        _etagCache.remove(cacheKey);
+      }
+    }
+
     return _parse(response);
   }
 
+  // نعيد إدخال العنصر ليصبح الأحدث، ونحذف الأقدم إن امتلأ الكاش
+  void _remember(String key, _CachedResponse value) {
+    _etagCache.remove(key);
+    _etagCache[key] = value;
+    if (_etagCache.length > _maxCacheEntries) {
+      _etagCache.remove(_etagCache.keys.first);
+    }
+  }
+
+  Uri _buildUrl(String path, Map<String, String>? query) =>
+      Uri.parse('${ApiEndpoints.baseUrl}$path').replace(queryParameters: query);
+
   Future<http.Response> _request(
     String method,
-    String path, {
+    Uri url, {
     Map<String, dynamic>? body,
-    Map<String, String>? query,
     String? token,
+    String? ifNoneMatch,
   }) async {
-    final Uri url = Uri.parse(
-      '${ApiEndpoints.baseUrl}$path',
-    ).replace(queryParameters: query);
-
     final request = http.Request(method, url)
       ..headers.addAll({
         'Content-Type': 'application/json',
@@ -86,6 +121,7 @@ class ApiClient {
         // التطبيق عربي فقط، فنطلب رسائل السيرفر بالعربية
         'Accept-Language': 'ar',
         if (token != null) 'Authorization': 'Bearer $token',
+        'If-None-Match': ?ifNoneMatch,
       });
     if (body != null) request.body = jsonEncode(body);
 
@@ -100,16 +136,24 @@ class ApiClient {
   }
 
   dynamic _parse(http.Response response) {
-    dynamic data;
-    try {
-      data = response.bodyBytes.isEmpty
-          ? null
-          : jsonDecode(utf8.decode(response.bodyBytes));
-    } on FormatException {
-      data = null;
-    }
+    final dynamic data = _decode(response.bodyBytes);
 
     if (response.statusCode >= 200 && response.statusCode < 300) return data;
     throw ApiException.fromResponse(response.statusCode, data);
   }
+
+  dynamic _decode(List<int> bytes) {
+    try {
+      return bytes.isEmpty ? null : jsonDecode(utf8.decode(bytes));
+    } on FormatException {
+      return null;
+    }
+  }
+}
+
+class _CachedResponse {
+  final String etag;
+  final List<int> body;
+
+  _CachedResponse(this.etag, this.body);
 }

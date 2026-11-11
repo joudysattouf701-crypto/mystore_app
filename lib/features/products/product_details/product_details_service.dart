@@ -7,7 +7,11 @@ class ProductDetailsService {
 
   // تفاصيل منتج واحد. الرد: { data: Product }، والمنتج غير الموجود يرجع 404
   Future<ProductModel> getProduct(int id) async {
-    final response = await _api.get(ApiEndpoints.product(id), auth: false);
+    final response = await _api.get(
+      ApiEndpoints.product(id),
+      auth: false,
+      etag: true,
+    );
 
     return ProductModel.fromJson(response['data'] ?? {});
   }

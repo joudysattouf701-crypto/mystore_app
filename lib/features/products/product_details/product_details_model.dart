@@ -6,11 +6,17 @@ class ProductModel {
   final String name;
   final String? description;
 
-  // السعر بالليرة السورية
+  // السعر عدد صحيح بالسنت الأمريكي (37999 = $379.99)، العرض عبر AppMoney
   final int price;
   final CategoryModel? category;
   final String imageUrl;
   final DateTime? createdAt;
+
+  // المخزون يأتي في التفاصيل فقط. null داخل التفاصيل يعني أن المستودع لم يرد
+  final int? stock;
+
+  // هل وصل حقل stock أصلاً؟ (منتجات القائمة لا تحتويه)
+  final bool hasStockInfo;
 
   ProductModel({
     required this.id,
@@ -20,6 +26,8 @@ class ProductModel {
     this.category,
     required this.imageUrl,
     this.createdAt,
+    this.stock,
+    this.hasStockInfo = false,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +43,8 @@ class ProductModel {
       createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'])
           : null,
+      stock: json['stock'] is int ? json['stock'] : null,
+      hasStockInfo: json.containsKey('stock'),
     );
   }
 
@@ -47,6 +57,7 @@ class ProductModel {
       'category': category?.toJson(),
       'image_url': imageUrl,
       'created_at': createdAt?.toIso8601String(),
+      if (hasStockInfo) 'stock': stock,
     };
   }
 }

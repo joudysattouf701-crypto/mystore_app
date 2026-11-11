@@ -7,7 +7,11 @@ class CategoriesService {
 
   // قائمة التصنيفات عامة لا تحتاج توكن. الرد: { data: [Category] }
   Future<List<CategoryModel>> getCategories() async {
-    final response = await _api.get(ApiEndpoints.categories, auth: false);
+    final response = await _api.get(
+      ApiEndpoints.categories,
+      auth: false,
+      etag: true,
+    );
 
     final List data = response['data'] ?? [];
     return data.map((item) => CategoryModel.fromJson(item)).toList();

@@ -26,7 +26,11 @@ class CartController extends GetxController {
   }
 
   // نفس المنتج يُجمع في سطر واحد لأن السيرفر يرفض تكرار المنتج في الطلب
-  void add(ProductModel product, int quantity) {
+  // يرجع false إذا نفدت الكمية ولم تُضف
+  bool add(ProductModel product, int quantity) {
+    if (product.hasStockInfo && product.stock != null && product.stock! <= 0) {
+      return false;
+    }
     final int index = _indexOf(product.id);
     if (index == -1) {
       items.add(
@@ -41,6 +45,7 @@ class CartController extends GetxController {
         quantity: updated.clamp(1, maxQuantity),
       );
     }
+    return true;
   }
 
   void setQuantity(int productId, int quantity) {

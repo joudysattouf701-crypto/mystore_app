@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:mystore/core/network/api_client.dart';
 import 'package:mystore/core/network/api_exception.dart';
+import 'package:mystore/core/realtime/realtime_service.dart';
 import 'package:mystore/core/storage/token_storage.dart';
 import 'package:mystore/core/utils/app_snackbar.dart';
 import 'package:get/get.dart';
@@ -73,6 +74,8 @@ class AuthSession extends GetxService {
   }
 
   Future<void> _end() async {
+    // نغلق اتصال الـ WebSocket: توكنه انتهى أو المستخدم خرج (القاعدة 5 و6)
+    RealtimeService.instance.disconnect();
     isLoggedIn.value = false;
     user.value = null;
     await _storage.clear();

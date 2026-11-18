@@ -38,7 +38,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int _quantity = 1;
 
   void _addToCart(ProductModel product) {
-    CartController.to.add(product, _quantity);
+    if (!CartController.to.add(product, _quantity)) {
+      AppSnackbar.error('نفدت كمية ${product.name}');
+      return;
+    }
     setState(() => _quantity = 1);
     AppSnackbar.success('أضفنا ${product.name} إلى السلة');
   }
@@ -249,7 +252,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: () => _addToCart(product),
+                onPressed: product.hasStockInfo &&
+                        product.stock != null &&
+                        product.stock! <= 0
+                    ? null
+                    : () => _addToCart(product),
                 icon: const Icon(Icons.add_shopping_cart_rounded, size: 20),
                 label: const Text('أضف إلى السلة'),
               ),

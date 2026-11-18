@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:mystore/core/network/api_exception.dart';
+import 'package:mystore/core/realtime/order_events.dart';
+import 'package:mystore/core/realtime/realtime_service.dart';
+import 'package:mystore/features/authentication/auth_session.dart';
 import 'package:mystore/core/utils/app_snackbar.dart';
 import 'package:mystore/features/orders/order_model.dart';
 import 'package:get/get.dart';
@@ -27,10 +32,46 @@ class OrdersController extends GetxController {
   // رقم آخر طلب، حتى نتجاهل رد فلتر قديم إن بدّل الزبون الحالة بسرعة
   int _requestId = 0;
 
+  RealtimeSubscription? _statusSub;
+  StreamSubscription<void>? _reconnectSub;
+
   @override
   void onInit() {
     super.onInit();
     fetchOrders();
+
+    // حالة أي طلب تتغير لحظياً في القائمة (قناة المستخدم)
+    final int? userId = AuthSession.to.user.value?.id;
+    debugPrint('Realtime[DBG]: OrdersController.onInit userId=$userId');
+    if (userId != null) {
+      _statusSub = RealtimeService.instance.watchStatusChanged(
+        userId,
+        _onStatusChanged,
+      );
+      _reconnectSub = RealtimeService.instance.onReconnected.listen(
+        (_) => fetchOrders(),
+      );
+    }
+  }
+
+  void _onStatusChanged(OrderStatusChangedEvent event) {
+    final int index = orders.indexWhere((order) => order.id == event.orderId);
+    if (index == -1 || orders[index].status == event.to) return;
+
+    // تحت فلتر حالة معيّنة: الطلب لم يعد منها فنزيله من القائمة
+    final OrderStatus? filter = selectedStatus.value;
+    if (filter != null && filter != event.to) {
+      orders.removeAt(index);
+      return;
+    }
+    orders[index] = orders[index].copyWith(status: event.to);
+  }
+
+  @override
+  void onClose() {
+    _statusSub?.cancel();
+    _reconnectSub?.cancel();
+    super.onClose();
   }
 
   void selectStatus(OrderStatus? status) {

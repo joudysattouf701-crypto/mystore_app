@@ -44,6 +44,23 @@ class OrderModel {
     this.updatedAt,
   });
 
+  OrderModel copyWith({
+    OrderStatus? status,
+    List<OrderStatusChangeModel>? statusHistory,
+    DateTime? updatedAt,
+  }) {
+    return OrderModel(
+      id: id,
+      customerId: customerId,
+      status: status ?? this.status,
+      items: items,
+      total: total,
+      statusHistory: statusHistory ?? this.statusHistory,
+      createdAt: createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
   // عدد القطع الكلي في الطلب
   int get quantity => items.fold(0, (sum, item) => sum + item.quantity);
 

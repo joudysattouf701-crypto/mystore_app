@@ -1,12 +1,3 @@
-// اختبار شامل للتطبيق في ملف واحد:
-//   1. السلة (بدون سيرفر)
-//   2. تحويل JSON للطلبات والإشعارات ورسائل الأخطاء (بدون سيرفر)
-//   3. الـ authentication و الـ authorization على السيرفر الحقيقي
-//   4. إنشاء الطلبات على السيرفر الحقيقي
-//
-// التشغيل:
-//   flutter test test/app_test.dart --reporter expanded
-
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -20,8 +11,6 @@ import 'package:mystore/features/cart/cart_model.dart';
 import 'package:mystore/features/notifications/notification_model.dart';
 import 'package:mystore/features/orders/order_model.dart';
 import 'package:mystore/features/products/product_details/product_details_model.dart';
-
-// ───────────────────────── helpers ─────────────────────────
 
 ProductModel _product(int id, {int price = 1000}) =>
     ProductModel(id: id, name: 'Product $id', price: price, imageUrl: '');
@@ -67,19 +56,25 @@ Future<_Res> _call(
   }
   final res = _Res(response.statusCode, data);
   // ignore: avoid_print
-  print('   $method $path  [${token == null ? 'no token' : 'token'}]'
-      '  ->  ${res.status} ${res.errorCode ?? ''}');
+  print(
+    '   $method $path  [${token == null ? 'no token' : 'token'}]'
+    '  ->  ${res.status} ${res.errorCode ?? ''}',
+  );
   return res;
 }
 
 Future<_User> _registerCustomer(String label) async {
   final stamp = DateTime.now().microsecondsSinceEpoch;
-  final res = await _call('POST', ApiEndpoints.register, body: {
-    'name': 'Test $label',
-    'email': 'apptest_${label}_$stamp@test.com',
-    'password': 'Password123',
-    'password_confirmation': 'Password123',
-  });
+  final res = await _call(
+    'POST',
+    ApiEndpoints.register,
+    body: {
+      'name': 'Test $label',
+      'email': 'apptest_${label}_$stamp@test.com',
+      'password': 'Password123',
+      'password_confirmation': 'Password123',
+    },
+  );
   expect(res.status, anyOf(200, 201), reason: 'register $label failed');
   final data = res.body['data'];
   return _User(
@@ -90,10 +85,7 @@ Future<_User> _registerCustomer(String label) async {
   );
 }
 
-// ───────────────────────── tests ─────────────────────────
-
 void main() {
-  // ═════════════ 1. Cart (offline) ═════════════
   group('1. Cart', () {
     late CartController cart;
 
@@ -106,8 +98,10 @@ void main() {
     tearDown(Get.reset);
 
     test('item subtotal = price * quantity', () {
-      final item =
-          CartItemModel(product: _product(1, price: 2500), quantity: 3);
+      final item = CartItemModel(
+        product: _product(1, price: 2500),
+        quantity: 3,
+      );
       expect(item.subtotal, 7500);
     });
 
@@ -192,8 +186,8 @@ void main() {
     });
 
     test('count sums quantities, total sums subtotals', () {
-      cart.add(_product(1, price: 1000), 2); // 2000
-      cart.add(_product(2, price: 500), 3); // 1500
+      cart.add(_product(1, price: 1000), 2);
+      cart.add(_product(2, price: 500), 3);
       expect(cart.count, 5);
       expect(cart.total, 3500);
     });
@@ -214,7 +208,6 @@ void main() {
     });
   });
 
-  // ═════════════ 2. Models (offline) ═════════════
   group('2. Models', () {
     group('OrderStatus', () {
       test('parses every known status', () {
@@ -329,8 +322,10 @@ void main() {
       });
 
       test('read notification', () {
-        final n = NotificationModel.fromJson(
-            {'id': 6, 'read_at': '2026-11-03T10:00:00Z'});
+        final n = NotificationModel.fromJson({
+          'id': 6,
+          'read_at': '2026-11-03T10:00:00Z',
+        });
         expect(n.isRead, isTrue);
       });
 
@@ -375,7 +370,6 @@ void main() {
     });
   });
 
-  // ═════════════ 3 + 4. Live server ═════════════
   group('Live server', () {
     late _User a;
     late _User b;
@@ -387,9 +381,11 @@ void main() {
       final res = await _call('GET', ApiEndpoints.products);
       products = res.body['data'] ?? [];
       // ignore: avoid_print
-      print('Customer A: id=${a.id}  ${a.email}\n'
-          'Customer B: id=${b.id}  ${b.email}\n'
-          'Products in database: ${products.length}');
+      print(
+        'Customer A: id=${a.id}  ${a.email}\n'
+        'Customer B: id=${b.id}  ${b.email}\n'
+        'Products in database: ${products.length}',
+      );
     });
 
     group('3. Authentication (401)', () {
@@ -410,8 +406,11 @@ void main() {
       });
 
       test('fake token -> 401', () async {
-        final res =
-            await _call('GET', ApiEndpoints.me, token: 'fake.token.123');
+        final res = await _call(
+          'GET',
+          ApiEndpoints.me,
+          token: 'fake.token.123',
+        );
         expect(res.status, 401);
       });
 
@@ -432,8 +431,12 @@ void main() {
       });
 
       test('customer cannot create a product (admin only) -> 403', () async {
-        final res = await _call('POST', ApiEndpoints.products,
-            token: a.token, body: {'name': 'hack', 'price': 1});
+        final res = await _call(
+          'POST',
+          ApiEndpoints.products,
+          token: a.token,
+          body: {'name': 'hack', 'price': 1},
+        );
         expect(res.status, 403);
         expect(res.errorCode, 'FORBIDDEN');
       });
@@ -455,90 +458,123 @@ void main() {
         final p1 = products[0];
         final p2 = products[1];
 
-        // نبني الطلب من السلة كما يفعل التطبيق تماماً
         Get.testMode = true;
         Get.put(AuthSession());
         final cart = Get.put(CartController());
         cart.add(ProductModel.fromJson(p1), 1);
-        cart.add(ProductModel.fromJson(p1), 1); // يُدمج => كمية 2
+        cart.add(ProductModel.fromJson(p1), 1);
         cart.add(ProductModel.fromJson(p2), 1);
         final body = {'items': cart.items.map((i) => i.toJson()).toList()};
         final int cartTotal = cart.total;
         Get.reset();
 
-        final created =
-            await _call('POST', ApiEndpoints.orders, token: a.token, body: body);
+        final created = await _call(
+          'POST',
+          ApiEndpoints.orders,
+          token: a.token,
+          body: body,
+        );
         expect(created.status, anyOf(200, 201));
 
         final order = created.body['data'];
         final int orderId = order['id'];
         expect(order['status'], 'pending');
         expect((order['items'] as List).length, 2);
-        expect(order['total'], cartTotal,
-            reason: 'server total must match the cart total');
+        expect(
+          order['total'],
+          cartTotal,
+          reason: 'server total must match the cart total',
+        );
 
-        // يظهر عند A في القائمة والتفاصيل
         final listA = await _call('GET', ApiEndpoints.orders, token: a.token);
         expect(
-            (listA.body['data'] as List).any((o) => o['id'] == orderId), isTrue);
-        final asOwner =
-            await _call('GET', ApiEndpoints.order(orderId), token: a.token);
+          (listA.body['data'] as List).any((o) => o['id'] == orderId),
+          isTrue,
+        );
+        final asOwner = await _call(
+          'GET',
+          ApiEndpoints.order(orderId),
+          token: a.token,
+        );
         expect(asOwner.status, 200);
         expect(asOwner.body['data']['total'], cartTotal);
 
-        // لا يظهر عند B
-        final asOther =
-            await _call('GET', ApiEndpoints.order(orderId), token: b.token);
+        final asOther = await _call(
+          'GET',
+          ApiEndpoints.order(orderId),
+          token: b.token,
+        );
         expect(asOther.status, anyOf(403, 404));
         final listB = await _call('GET', ApiEndpoints.orders, token: b.token);
-        expect((listB.body['data'] as List).any((o) => o['id'] == orderId),
-            isFalse,
-            reason: 'A\'s order must not appear in B\'s list');
+        expect(
+          (listB.body['data'] as List).any((o) => o['id'] == orderId),
+          isFalse,
+          reason: 'A\'s order must not appear in B\'s list',
+        );
       });
 
       test('reject: empty items -> 422', () async {
-        final res = await _call('POST', ApiEndpoints.orders,
-            token: a.token, body: {'items': []});
+        final res = await _call(
+          'POST',
+          ApiEndpoints.orders,
+          token: a.token,
+          body: {'items': []},
+        );
         expect(res.status, 422);
       });
 
       test('reject: quantity 0 -> 422', () async {
         if (products.isEmpty) return markTestSkipped('No products');
-        final res =
-            await _call('POST', ApiEndpoints.orders, token: a.token, body: {
-          'items': [
-            {'product_id': products.first['id'], 'quantity': 0},
-          ],
-        });
+        final res = await _call(
+          'POST',
+          ApiEndpoints.orders,
+          token: a.token,
+          body: {
+            'items': [
+              {'product_id': products.first['id'], 'quantity': 0},
+            ],
+          },
+        );
         expect(res.status, 422);
       });
 
       test('reject: product that does not exist', () async {
-        final res =
-            await _call('POST', ApiEndpoints.orders, token: a.token, body: {
-          'items': [
-            {'product_id': 999999999, 'quantity': 1},
-          ],
-        });
+        final res = await _call(
+          'POST',
+          ApiEndpoints.orders,
+          token: a.token,
+          body: {
+            'items': [
+              {'product_id': 999999999, 'quantity': 1},
+            ],
+          },
+        );
         expect(res.status, anyOf(404, 422));
       });
 
       test('reject: same product twice -> 422', () async {
         if (products.isEmpty) return markTestSkipped('No products');
         final id = products.first['id'];
-        final res =
-            await _call('POST', ApiEndpoints.orders, token: a.token, body: {
-          'items': [
-            {'product_id': id, 'quantity': 1},
-            {'product_id': id, 'quantity': 1},
-          ],
-        });
+        final res = await _call(
+          'POST',
+          ApiEndpoints.orders,
+          token: a.token,
+          body: {
+            'items': [
+              {'product_id': id, 'quantity': 1},
+              {'product_id': id, 'quantity': 1},
+            ],
+          },
+        );
         expect(res.status, 422);
       });
 
       test('order that does not exist -> 404', () async {
-        final res = await _call('GET', ApiEndpoints.order(999999999),
-            token: a.token);
+        final res = await _call(
+          'GET',
+          ApiEndpoints.order(999999999),
+          token: a.token,
+        );
         expect(res.status, 404);
       });
     });

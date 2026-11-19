@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// الزر الرئيسي مع مؤشر التحميل
 class AppButton extends StatelessWidget {
   final String label;
   final bool isLoading;

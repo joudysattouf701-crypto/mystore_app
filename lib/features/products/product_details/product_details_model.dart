@@ -1,21 +1,17 @@
 import 'package:mystore/features/products/categories/categories_model.dart';
 
-// المنتج كما يرجعه السيرفر (ضمن القائمة وضمن التفاصيل)
 class ProductModel {
   final int id;
   final String name;
   final String? description;
 
-  // السعر عدد صحيح بالسنت الأمريكي (37999 = $379.99)، العرض عبر AppMoney
   final int price;
   final CategoryModel? category;
   final String imageUrl;
   final DateTime? createdAt;
 
-  // المخزون يأتي في التفاصيل فقط. null داخل التفاصيل يعني أن المستودع لم يرد
   final int? stock;
 
-  // هل وصل حقل stock أصلاً؟ (منتجات القائمة لا تحتويه)
   final bool hasStockInfo;
 
   ProductModel({

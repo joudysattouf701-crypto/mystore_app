@@ -1,4 +1,3 @@
-// بيانات المستخدم كما يرجعها السيرفر (ضمن الدخول والتسجيل و /auth/me)
 class UserModel {
   final int id;
   final String name;

@@ -18,7 +18,6 @@ class AuthSession extends GetxService {
   var isLoggedIn = false.obs;
   var user = Rxn<UserModel>();
 
-  // تُستدعى مرة واحدة عند فتح التطبيق لاسترجاع الجلسة المحفوظة
   Future<AuthSession> init() async {
     await _storage.load();
     isLoggedIn.value = _storage.accessToken != null;
@@ -32,7 +31,6 @@ class AuthSession extends GetxService {
     return this;
   }
 
-  // حفظ الجلسة بعد نجاح تسجيل الدخول أو إنشاء الحساب
   Future<void> start({
     required String accessToken,
     required UserModel user,
@@ -47,8 +45,6 @@ class AuthSession extends GetxService {
     await _storage.saveUser(jsonEncode(updated.toJson()));
   }
 
-  // التحقق من التوكن المحفوظ وتحديث بيانات المستخدم من السيرفر عند فتح التطبيق.
-  // التوكن المرفوض (401) تنهيه _onSessionExpired، وانقطاع الشبكة يُبقي الجلسة المحفوظة
   Future<void> refreshUser() async {
     if (!isLoggedIn.value) return;
 
@@ -59,12 +55,9 @@ class AuthSession extends GetxService {
         return;
       }
       await updateUser(fresh);
-    } on ApiException {
-      // نكمل بالبيانات المحفوظة
-    }
+    } on ApiException {}
   }
 
-  // السيرفر لا يملك endpoint للخروج، فالخروج محلي فقط
   Future<void> logout() => _end();
 
   void _onSessionExpired() {
@@ -74,7 +67,6 @@ class AuthSession extends GetxService {
   }
 
   Future<void> _end() async {
-    // نغلق اتصال الـ WebSocket: توكنه انتهى أو المستخدم خرج (القاعدة 5 و6)
     RealtimeService.instance.disconnect();
     isLoggedIn.value = false;
     user.value = null;

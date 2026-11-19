@@ -5,7 +5,6 @@ import 'package:mystore/features/notifications/notification_model.dart';
 import 'package:mystore/features/orders/orders_widgets/order_status_badge.dart';
 import 'package:flutter/material.dart';
 
-// إشعار في القائمة: أيقونة بلون حالة الطلب، العنوان والوقت، ونقطة لغير المقروء
 class NotificationTile extends StatelessWidget {
   final NotificationModel notification;
   final VoidCallback? onTap;
@@ -15,8 +14,7 @@ class NotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isRead = notification.isRead;
-    final Color color =
-        notification.orderStatus?.color ?? AppColors.primary;
+    final Color color = notification.orderStatus?.color ?? AppColors.primary;
     final IconData icon =
         notification.orderStatus?.icon ?? Icons.notifications_none_rounded;
 
@@ -92,7 +90,6 @@ class NotificationTile extends StatelessWidget {
   }
 }
 
-// بطاقة هيكلية بنفس شكل الإشعار تظهر أثناء التحميل
 class NotificationTileSkeleton extends StatelessWidget {
   const NotificationTileSkeleton({super.key});
 
@@ -128,7 +125,6 @@ class NotificationTileSkeleton extends StatelessWidget {
   }
 }
 
-// فلتر الإشعارات: "الكل" أو "غير المقروءة"
 class NotificationFilterChips extends StatelessWidget {
   final bool unreadOnly;
   final ValueChanged<bool> onSelected;
@@ -146,10 +142,7 @@ class NotificationFilterChips extends StatelessWidget {
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          _buildChip('الكل', false),
-          _buildChip('غير المقروءة', true),
-        ],
+        children: [_buildChip('الكل', false), _buildChip('غير المقروءة', true)],
       ),
     );
   }

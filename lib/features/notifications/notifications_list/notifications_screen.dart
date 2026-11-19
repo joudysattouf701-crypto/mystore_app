@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'notifications_controller.dart';
 
-// إشعارات الزبون: فلتر المقروءة في الأعلى ثم القائمة من الأحدث
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
 
@@ -15,11 +14,8 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  final NotificationsController controller = Get.put(
-    NotificationsController(),
-  );
+  final NotificationsController controller = Get.put(NotificationsController());
 
-  // عند الاقتراب من آخر القائمة نحمّل الصفحة التالية
   bool _onScroll(ScrollNotification notification) {
     if (notification.metrics.extentAfter < 400) controller.loadMore();
     return false;

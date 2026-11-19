@@ -6,7 +6,6 @@ import 'orders_list_model.dart';
 class OrdersListService {
   final ApiClient _api = ApiClient.instance;
 
-  // تحتاج توكن، والسيرفر يرجع للزبون طلباته فقط
   Future<OrdersListModel> getOrders({
     OrderStatus? status,
     int page = 1,

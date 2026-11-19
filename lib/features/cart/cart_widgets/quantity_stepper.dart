@@ -1,7 +1,6 @@
 import 'package:mystore/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
-// زر زيادة وإنقاص الكمية. compact للنسخة الصغيرة داخل بطاقة السلة
 class QuantityStepper extends StatelessWidget {
   final int value;
   final ValueChanged<int> onChanged;

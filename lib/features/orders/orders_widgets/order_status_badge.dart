@@ -2,7 +2,6 @@ import 'package:mystore/core/theme/app_colors.dart';
 import 'package:mystore/features/orders/order_model.dart';
 import 'package:flutter/material.dart';
 
-// لون وأيقونة كل حالة، حتى يميّز الزبون حالة طلبه بنظرة
 extension OrderStatusStyle on OrderStatus {
   Color get color {
     switch (this) {
@@ -35,7 +34,6 @@ extension OrderStatusStyle on OrderStatus {
   }
 }
 
-// شارة صغيرة بلون الحالة واسمها
 class OrderStatusBadge extends StatelessWidget {
   final OrderStatus status;
 
@@ -68,7 +66,6 @@ class OrderStatusBadge extends StatelessWidget {
   }
 }
 
-// شريط أفقي لفلترة الطلبات حسب الحالة يبدأ بـ "الكل". الاختيار null يعني "الكل"
 class OrderStatusChips extends StatelessWidget {
   final OrderStatus? selected;
   final ValueChanged<OrderStatus?> onSelected;

@@ -1,4 +1,3 @@
-// حالات الطلب كما يرسلها السيرفر، مع اسمها بالعربية
 enum OrderStatus {
   pending('pending', 'قيد الانتظار'),
   confirmed('confirmed', 'مؤكد'),
@@ -11,7 +10,6 @@ enum OrderStatus {
 
   const OrderStatus(this.value, this.label);
 
-  // حالة غير معروفة نعرضها كـ "قيد الانتظار" بدل أن يفشل التحويل
   static OrderStatus fromJson(dynamic value) {
     return OrderStatus.values.firstWhere(
       (status) => status.value == value,
@@ -20,14 +18,12 @@ enum OrderStatus {
   }
 }
 
-// الطلب كما يرجعه السيرفر. سجل الحالات لا يأتي ضمن القائمة فيبقى فارغاً هناك
 class OrderModel {
   final int id;
   final int customerId;
   final OrderStatus status;
   final List<OrderItemModel> items;
 
-  // المجموع بالليرة السورية
   final int total;
   final List<OrderStatusChangeModel> statusHistory;
   final DateTime? createdAt;
@@ -61,7 +57,6 @@ class OrderModel {
     );
   }
 
-  // عدد القطع الكلي في الطلب
   int get quantity => items.fold(0, (sum, item) => sum + item.quantity);
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -99,7 +94,6 @@ class OrderModel {
   }
 }
 
-// منتج داخل الطلب بسعره وقت الطلب
 class OrderItemModel {
   final int productId;
   final String productName;
@@ -136,7 +130,6 @@ class OrderItemModel {
   }
 }
 
-// تغيير واحد في حالة الطلب
 class OrderStatusChangeModel {
   final OrderStatus from;
   final OrderStatus to;

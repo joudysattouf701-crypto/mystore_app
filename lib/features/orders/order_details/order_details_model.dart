@@ -1,6 +1,5 @@
 import 'package:mystore/features/orders/order_model.dart';
 
-// رد تفاصيل الطلب: { data: Order } ومعه سجل تغييرات الحالة
 class OrderDetailsModel {
   final OrderModel order;
 

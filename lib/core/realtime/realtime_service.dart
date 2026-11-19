@@ -5,7 +5,6 @@ import 'package:mystore/core/network/api_client.dart';
 import 'package:mystore/core/network/api_endpoints.dart';
 import 'order_events.dart';
 
-// اشتراك واحد بحدث: عند إغلاق الشاشة نستدعي cancel حتى لا يبقى اشتراك شغال بالخلفية
 class RealtimeSubscription {
   final VoidCallback _onCancel;
   bool _cancelled = false;
@@ -19,11 +18,6 @@ class RealtimeSubscription {
   }
 }
 
-// اتصال WebSocket واحد للتطبيق كله مع سيرفر Reverb (بروتوكول Pusher).
-// - يُفتح عند أول اشتراك ويُغلق عند إلغاء آخر اشتراك أو عند تسجيل الخروج
-// - القنوات كلها خاصة: قبل الاشتراك تسأل المكتبة الـ backend عبر
-//   POST /broadcasting/auth ومعها JWT، والـ backend يرد 403 إن لم يكن مسموحاً
-// - عند رجوع الاتصال بعد انقطاع تصدر onReconnected لتعيد الشاشات الـ GET
 class RealtimeService {
   RealtimeService._();
   static final RealtimeService instance = RealtimeService._();
@@ -35,11 +29,8 @@ class RealtimeService {
   final Map<String, _ChannelEntry> _channels = {};
   final StreamController<void> _reconnected = StreamController.broadcast();
 
-  // الأحداث التي قد تفوت وقت الانقطاع لا تُعاد، فالشاشة تجلب البيانات من جديد
   Stream<void> get onReconnected => _reconnected.stream;
 
-  // الزبون: تغيير حالة أي طلب من طلباته (قناة private-user.{id}).
-  // القناة تحمل أحداث كل طلبات المستخدم، فالفلترة بـ order_id على الشاشة
   RealtimeSubscription watchStatusChanged(
     int userId,
     void Function(OrderStatusChangedEvent event) onEvent,
@@ -69,7 +60,6 @@ class RealtimeService {
     );
     entry.refs++;
 
-    // TODO(debug): لوغات تشخيص مؤقتة، تُحذف بعد حل المشكلة
     if (entry.refs == 1) {
       entry.channel.whenSubscriptionSucceeded().listen(
         (_) => debugPrint('Realtime[DBG]: subscribed to $channelName'),
@@ -90,12 +80,10 @@ class RealtimeService {
           try {
             handler(data);
           } catch (e) {
-            // حدث بشكل غير متوقع لا يجب أن يوقف باقي الأحداث
             debugPrint('Realtime: bad $eventName payload: $e');
           }
         });
 
-    // الاتصال قائم من قبل: نشترك الآن، وإلا فـ onConnectionEstablished يشترك
     if (_connectionCount > 0) entry.channel.subscribeIfNotUnsubscribed();
 
     return RealtimeSubscription._(() {
@@ -119,7 +107,6 @@ class RealtimeService {
         port: RealtimeConfig.port,
         key: RealtimeConfig.appKey,
       ),
-      // أي خطأ اتصال: نعيد المحاولة (المكتبة تضع فاصلاً بين المحاولات)
       connectionErrorHandler: (exception, trace, refresh) {
         debugPrint('Realtime: connection error: $exception');
         refresh();
@@ -132,7 +119,6 @@ class RealtimeService {
       for (final entry in _channels.values) {
         entry.channel.subscribeIfNotUnsubscribed();
       }
-      // الاتصال الأول لا يحتاج إعادة جلب، لأن الشاشة جلبت بياناتها قبله
       if (_connectionCount > 1) _reconnected.add(null);
     });
 
@@ -141,7 +127,6 @@ class RealtimeService {
     return client;
   }
 
-  // عند الخروج أو انتهاء الجلسة: نغلق كل شيء. التوكن الجديد يحتاج اتصالاً جديداً
   void disconnect() {
     _connectionSub?.cancel();
     _connectionSub = null;
@@ -160,9 +145,6 @@ class _ChannelEntry {
   _ChannelEntry(this.channel);
 }
 
-// توقيع الاشتراك: POST /broadcasting/auth بجسم JSON وبـ Authorization: Bearer <JWT>.
-// نمرّ عبر ApiClient فيضيف الـ header تلقائياً، وانتهاء التوكن (401) ينهي الجلسة.
-// الرد: { "auth": "<توقيع>" }، و403 يعني أن القناة ليست لهذا المستخدم
 class _JwtAuthorizationDelegate
     implements
         EndpointAuthorizableChannelAuthorizationDelegate<

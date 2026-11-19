@@ -15,17 +15,19 @@ import 'product_details_model.dart';
 class ProductDetailsScreen extends StatefulWidget {
   final int productId;
 
-  // نسخة المنتج من القائمة لعرضها فوراً قبل وصول التفاصيل
   final ProductModel? initial;
 
-  const ProductDetailsScreen({super.key, required this.productId, this.initial});
+  const ProductDetailsScreen({
+    super.key,
+    required this.productId,
+    this.initial,
+  });
 
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  // tag برقم المنتج حتى لا تتشارك شاشتا تفاصيل نفس الـ controller
   late final ProductDetailsController controller = Get.put(
     ProductDetailsController(
       productId: widget.productId,
@@ -34,7 +36,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     tag: '${widget.productId}',
   );
 
-  // الكمية المختارة قبل الإضافة للسلة
   int _quantity = 1;
 
   void _addToCart(ProductModel product) {
@@ -83,7 +84,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  // رسالة في منتصف الشاشة مع زر رجوع في الأعلى
   Widget _buildMessage(Widget child) {
     return SafeArea(
       child: Column(
@@ -194,9 +194,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  description.isEmpty
-                      ? 'لا يوجد وصف لهذا المنتج'
-                      : description,
+                  description.isEmpty ? 'لا يوجد وصف لهذا المنتج' : description,
                   style: const TextStyle(
                     fontSize: 15,
                     height: 1.7,
@@ -211,7 +209,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  // الكمية المتوفرة. null يعني أن المستودع لم يرد، والصفحة تبقى شغّالة
   Widget _buildStock(int? stock) {
     final String text;
     final Color color;
@@ -232,7 +229,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  // شريط ثابت في الأسفل: اختيار الكمية وزر الإضافة للسلة
   Widget _buildBottomBar(ProductModel product) {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
@@ -252,7 +248,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: product.hasStockInfo &&
+                onPressed:
+                    product.hasStockInfo &&
                         product.stock != null &&
                         product.stock! <= 0
                     ? null
@@ -268,7 +265,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 }
 
-// زر دائري أبيض يظهر بوضوح فوق الصورة، وهو زر الرجوع افتراضياً
 class _RoundButton extends StatelessWidget {
   final IconData icon;
   final String? tooltip;

@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'cart_controller.dart';
 import 'cart_widgets/cart_item_tile.dart';
 
-// السلة: مراجعة المنتجات والكميات ثم تأكيد الطلب
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 

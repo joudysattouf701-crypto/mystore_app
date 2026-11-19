@@ -15,7 +15,6 @@ class CreateOrderController extends GetxController {
   var isLoading = false.obs;
   var createdOrder = Rxn<OrderModel>();
 
-  // إرسال محتوى السلة كطلب جديد، ثم إفراغها والانتقال لقائمة الطلبات
   Future<void> submit() async {
     final List<CartItemModel> items = CartController.to.items.toList();
     if (items.isEmpty || isLoading.value) return;
@@ -27,7 +26,6 @@ class CreateOrderController extends GetxController {
       createdOrder.value = result.order;
 
       CartController.to.clear();
-      // إن كانت قائمة الطلبات مفتوحة مسبقاً نحدّثها لتظهر الطلب الجديد
       if (Get.isRegistered<OrdersController>()) {
         Get.find<OrdersController>().fetchOrders();
       }
@@ -45,7 +43,6 @@ class CreateOrderController extends GetxController {
     }
   }
 
-  // أخطاء العناصر تأتي بمفاتيح مثل items.0.product_id، فنضع اسم المنتج بدل الرقم
   String _errorMessage(ApiException e, List<CartItemModel> items) {
     if (e.errors.isEmpty) return e.displayMessage;
 

@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'products_controller.dart';
 
-// الشاشة الرئيسية للزبون: التحية، شريط التصنيفات، وشبكة المنتجات
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
 
@@ -24,7 +23,6 @@ class ProductsScreen extends StatefulWidget {
 class _ProductsScreenState extends State<ProductsScreen> {
   final ProductsController controller = Get.put(ProductsController());
 
-  // شبكة بعمودين على الموبايل، وتزيد الأعمدة على الشاشات العريضة
   static const SliverGridDelegate _gridDelegate =
       SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 220,
@@ -33,7 +31,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
         childAspectRatio: 0.68,
       );
 
-  // عند الاقتراب من آخر القائمة نحمّل الصفحة التالية
   bool _onScroll(ScrollNotification notification) {
     if (notification.metrics.extentAfter < 400) controller.loadMore();
     return false;
@@ -123,7 +120,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
             ),
           ),
           const SizedBox(width: 8),
-          // زر الخروج مؤقت هنا لحين إضافة صفحة الحساب
           _buildHeaderButton(
             tooltip: 'تسجيل الخروج',
             icon: Icons.logout_rounded,
@@ -158,8 +154,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           sliver: SliverGrid(
             gridDelegate: _gridDelegate,
             delegate: SliverChildBuilderDelegate(
-              (context, index) =>
-                  const Shimmer(child: ProductCardSkeleton()),
+              (context, index) => const Shimmer(child: ProductCardSkeleton()),
               childCount: 6,
             ),
           ),

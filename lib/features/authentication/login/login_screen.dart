@@ -46,7 +46,6 @@ class _LoginScreenState extends State<LoginScreen> {
       footer: AuthFooter(
         question: 'ليس لديك حساب؟',
         action: 'أنشئ حساباً',
-        // الانتقال لشاشة إنشاء الحساب عند الضغط
         onTap: () => Get.to(() => const RegisterScreen()),
       ),
       child: Form(

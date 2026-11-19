@@ -1,6 +1,5 @@
 import 'package:mystore/features/orders/order_model.dart';
 
-// رد إنشاء الطلب: { data: Order } بحالة pending
 class CreateOrderModel {
   final OrderModel order;
 

@@ -9,11 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'order_details_controller.dart';
 
-// تفاصيل طلب واحد: الحالة، ثم المنتجات والمجموع، ثم سجل تغييرات الحالة
 class OrderDetailsScreen extends StatefulWidget {
   final int orderId;
 
-  // نسخة الطلب من القائمة لعرضها فوراً قبل وصول التفاصيل
   final OrderModel? initial;
 
   const OrderDetailsScreen({super.key, required this.orderId, this.initial});
@@ -23,7 +21,6 @@ class OrderDetailsScreen extends StatefulWidget {
 }
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
-  // tag برقم الطلب حتى لا تتشارك شاشتا تفاصيل نفس الـ controller
   late final OrderDetailsController controller = Get.put(
     OrderDetailsController(orderId: widget.orderId, initial: widget.initial),
     tag: '${widget.orderId}',
@@ -80,7 +77,6 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     );
   }
 
-  // بطاقة بيضاء بإطار وعنوان اختياري
   Widget _buildSection({String? title, required Widget child}) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -225,7 +221,6 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     );
   }
 
-  // السجل لا يأتي مع القائمة، فننتظر التفاصيل قبل عرضه
   Widget _buildHistory(OrderModel order) {
     if (controller.isLoaded.value) return OrderStatusTimeline(order: order);
 

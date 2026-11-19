@@ -5,7 +5,6 @@ import 'notifications_list_model.dart';
 class NotificationsListService {
   final ApiClient _api = ApiClient.instance;
 
-  // تحتاج توكن، والسيرفر يرجع للزبون إشعاراته فقط
   Future<NotificationsListModel> getNotifications({
     bool unreadOnly = false,
     int page = 1,

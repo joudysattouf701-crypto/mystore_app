@@ -3,7 +3,6 @@ import 'package:mystore/features/products/product_details/product_details_model.
 import 'package:get/get.dart';
 import 'cart_model.dart';
 
-// سلة الزبون، تعيش طوال تشغيل التطبيق وتُفرغ عند الخروج
 class CartController extends GetxController {
   static CartController get to => Get.find<CartController>();
 
@@ -11,7 +10,6 @@ class CartController extends GetxController {
 
   var items = <CartItemModel>[].obs;
 
-  // عدد القطع الكلي، يظهر على أيقونة السلة
   int get count => items.fold(0, (sum, item) => sum + item.quantity);
 
   int get total => items.fold(0, (sum, item) => sum + item.subtotal);
@@ -19,14 +17,11 @@ class CartController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // سلة حساب لا تنتقل لحساب آخر يدخل من نفس الجهاز
     ever(AuthSession.to.isLoggedIn, (bool loggedIn) {
       if (!loggedIn) clear();
     });
   }
 
-  // نفس المنتج يُجمع في سطر واحد لأن السيرفر يرفض تكرار المنتج في الطلب
-  // يرجع false إذا نفدت الكمية ولم تُضف
   bool add(ProductModel product, int quantity) {
     if (product.hasStockInfo && product.stock != null && product.stock! <= 0) {
       return false;

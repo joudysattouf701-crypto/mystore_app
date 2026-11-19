@@ -1,6 +1,5 @@
 import 'package:mystore/features/notifications/notification_model.dart';
 
-// رد تعليم الإشعار كمقروء: { data: Notification } ومعه وقت القراءة
 class MarkReadModel {
   final NotificationModel notification;
 

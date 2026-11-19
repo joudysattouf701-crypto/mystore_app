@@ -15,21 +15,18 @@ class OrdersController extends GetxController {
 
   final OrdersListService _ordersService = OrdersListService();
 
-  // null يعني "الكل"
   var selectedStatus = Rxn<OrderStatus>();
 
   var orders = <OrderModel>[].obs;
   var isLoading = false.obs;
   var isLoadingMore = false.obs;
 
-  // رسالة فشل تحميل الصفحة الأولى، تظهر مع زر إعادة المحاولة
   var errorMessage = RxnString();
 
   int _page = 1;
   int _lastPage = 1;
   bool get hasMore => _page < _lastPage;
 
-  // رقم آخر طلب، حتى نتجاهل رد فلتر قديم إن بدّل الزبون الحالة بسرعة
   int _requestId = 0;
 
   RealtimeSubscription? _statusSub;
@@ -40,7 +37,6 @@ class OrdersController extends GetxController {
     super.onInit();
     fetchOrders();
 
-    // حالة أي طلب تتغير لحظياً في القائمة (قناة المستخدم)
     final int? userId = AuthSession.to.user.value?.id;
     debugPrint('Realtime[DBG]: OrdersController.onInit userId=$userId');
     if (userId != null) {
@@ -58,7 +54,6 @@ class OrdersController extends GetxController {
     final int index = orders.indexWhere((order) => order.id == event.orderId);
     if (index == -1 || orders[index].status == event.to) return;
 
-    // تحت فلتر حالة معيّنة: الطلب لم يعد منها فنزيله من القائمة
     final OrderStatus? filter = selectedStatus.value;
     if (filter != null && filter != event.to) {
       orders.removeAt(index);
@@ -80,7 +75,6 @@ class OrdersController extends GetxController {
     fetchOrders();
   }
 
-  // تحميل الصفحة الأولى من جديد (عند الفتح، وتبديل الحالة، والسحب للتحديث)
   Future<void> fetchOrders() async {
     final int request = ++_requestId;
 
@@ -106,7 +100,6 @@ class OrdersController extends GetxController {
     }
   }
 
-  // الصفحة التالية عند الوصول لآخر القائمة
   Future<void> loadMore() async {
     if (isLoading.value || isLoadingMore.value || !hasMore) return;
     final int request = _requestId;

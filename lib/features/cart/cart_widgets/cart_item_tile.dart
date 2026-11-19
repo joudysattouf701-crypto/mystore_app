@@ -6,7 +6,6 @@ import '../cart_controller.dart';
 import '../cart_model.dart';
 import 'quantity_stepper.dart';
 
-// سطر منتج في السلة: الصورة والاسم والسعر، مع تعديل الكمية والحذف
 class CartItemTile extends StatelessWidget {
   final CartItemModel item;
   final ValueChanged<int> onQuantityChanged;

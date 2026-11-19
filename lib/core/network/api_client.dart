@@ -14,15 +14,11 @@ class ApiClient {
   final http.Client _http = http.Client();
   final TokenStorage _storage = TokenStorage.instance;
 
-  // يُستدعى عندما يرفض السيرفر التوكن (منتهي أو غير صالح)
   void Function()? onSessionExpired;
 
-  // كاش ETag في الذاكرة: الرابط الكامل (مع الـ query) -> آخر ETag وجسم الرد
-  // يُستخدم فقط للمنتجات وتفاصيل المنتج والتصنيفات
   static const int _maxCacheEntries = 200;
   final Map<String, _CachedResponse> _etagCache = {};
 
-  // etag: true يفعّل If-None-Match، فإن رد السيرفر 304 نرجع الجسم المحفوظ
   Future<dynamic> get(
     String path, {
     Map<String, String>? query,
@@ -71,13 +67,11 @@ class ApiClient {
       ifNoneMatch: cached?.etag,
     );
 
-    // السيرفر لا يدعم تجديد التوكن، فعند رفضه ننهي الجلسة مباشرة
     if (response.statusCode == 401 && auth) {
       await _storage.clear();
       onSessionExpired?.call();
     }
 
-    // 304: لم يتغير شيء ولم يُحمَّل أي جسم، نستخدم النسخة المحفوظة
     if (response.statusCode == 304 && cached != null) {
       _remember(cacheKey, cached);
       return _decode(cached.body);
@@ -95,7 +89,6 @@ class ApiClient {
     return _parse(response);
   }
 
-  // نعيد إدخال العنصر ليصبح الأحدث، ونحذف الأقدم إن امتلأ الكاش
   void _remember(String key, _CachedResponse value) {
     _etagCache.remove(key);
     _etagCache[key] = value;
@@ -118,7 +111,6 @@ class ApiClient {
       ..headers.addAll({
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        // التطبيق عربي فقط، فنطلب رسائل السيرفر بالعربية
         'Accept-Language': 'ar',
         if (token != null) 'Authorization': 'Bearer $token',
         'If-None-Match': ?ifNoneMatch,

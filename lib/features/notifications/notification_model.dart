@@ -1,8 +1,6 @@
 import 'package:mystore/features/orders/order_model.dart';
 
-// إشعار كما يرجعه السيرفر. محتوى data يختلف حسب النوع
 class NotificationModel {
-  // النوع الوحيد حالياً: تغيّر حالة طلب
   static const String orderStatusChanged = 'order_status_changed';
 
   final int id;
@@ -10,7 +8,6 @@ class NotificationModel {
   final String title;
   final Map<String, dynamic> data;
 
-  // null يعني أن الإشعار غير مقروء
   final DateTime? readAt;
   final DateTime? createdAt;
 
@@ -25,7 +22,6 @@ class NotificationModel {
 
   bool get isRead => readAt != null;
 
-  // رقم الطلب المرتبط بالإشعار إن وُجد
   int? get orderId => data['order_id'];
 
   OrderStatus? get orderStatus =>

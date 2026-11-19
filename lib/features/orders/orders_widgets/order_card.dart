@@ -6,12 +6,10 @@ import 'package:mystore/features/orders/order_model.dart';
 import 'package:flutter/material.dart';
 import 'order_status_badge.dart';
 
-// بطاقة طلب في القائمة: الرقم والتاريخ والحالة، ثم المنتجات، ثم المجموع
 class OrderCard extends StatelessWidget {
   final OrderModel order;
   final VoidCallback? onTap;
 
-  // نعرض أول منتجين فقط ونلخّص الباقي بسطر واحد
   static const int _visibleItems = 2;
 
   const OrderCard({super.key, required this.order, this.onTap});
@@ -173,7 +171,6 @@ class OrderCard extends StatelessWidget {
   }
 }
 
-// بطاقة هيكلية بنفس شكل بطاقة الطلب تظهر أثناء التحميل
 class OrderCardSkeleton extends StatelessWidget {
   const OrderCardSkeleton({super.key});
 

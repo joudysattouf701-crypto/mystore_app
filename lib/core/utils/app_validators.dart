@@ -1,4 +1,3 @@
-// قواعد التحقق المشتركة بين شاشات المصادقة (مطابقة لقواعد السيرفر)
 class AppValidators {
   static final RegExp _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
   static final RegExp _letter = RegExp(r'[A-Za-z؀-ۿ]');
@@ -20,7 +19,6 @@ class AppValidators {
         : 'البريد الإلكتروني غير صحيح';
   }
 
-  // السيرفر يشترط 8 أحرف على الأقل وفيها حرف ورقم
   static String? password(String? value) {
     if (value == null || value.isEmpty) return 'هذا الحقل مطلوب';
     if (value.length < 8) return 'كلمة المرور 8 أحرف على الأقل';
@@ -31,7 +29,6 @@ class AppValidators {
   }
 
   static String? Function(String?) confirmPassword(String Function() password) {
-    return (value) =>
-        value != password() ? 'كلمتا المرور غير متطابقتين' : null;
+    return (value) => value != password() ? 'كلمتا المرور غير متطابقتين' : null;
   }
 }

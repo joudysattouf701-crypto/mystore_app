@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../cart_controller.dart';
 
-// عدد القطع في السلة فوق أي زر، ويختفي حين تكون السلة فارغة
 class CartBadge extends StatelessWidget {
   final Widget child;
 

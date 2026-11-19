@@ -51,7 +51,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       footer: AuthFooter(
         question: 'لديك حساب مسبقاً؟',
         action: 'سجّل الدخول',
-        // العودة لشاشة تسجيل الدخول دون تكديس الصفحات فوق بعضها
         onTap: () => Get.back(),
       ),
       child: Form(

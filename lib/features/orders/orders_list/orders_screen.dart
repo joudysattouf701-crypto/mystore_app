@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'orders_controller.dart';
 
-// طلبات الزبون: فلتر الحالة في الأعلى ثم قائمة الطلبات من الأحدث
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
 
@@ -18,7 +17,6 @@ class OrdersScreen extends StatefulWidget {
 class _OrdersScreenState extends State<OrdersScreen> {
   final OrdersController controller = Get.put(OrdersController());
 
-  // عند الاقتراب من آخر القائمة نحمّل الصفحة التالية
   bool _onScroll(ScrollNotification notification) {
     if (notification.metrics.extentAfter < 400) controller.loadMore();
     return false;

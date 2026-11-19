@@ -13,7 +13,6 @@ class RegisterModel {
     required this.expiresIn,
   });
 
-  // السيرفر يرجع التوكن مع التسجيل مباشرة، فلا نحتاج طلب دخول بعده
   factory RegisterModel.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> data = json['data'] ?? {};
     return RegisterModel(

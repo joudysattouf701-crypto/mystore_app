@@ -1,12 +1,3 @@
-// اختبار سريع لحالات الـ authentication و الـ authorization على السيرفر الحقيقي.
-// بدل ما نسجل دخول ونطلع ونرجع نفوت بحساب تاني يدوياً، الاختبار:
-//   1. ينشئ زبونين جديدين (A و B) تلقائياً ويأخذ توكن كل واحد
-//   2. يجرب الطلبات بدون توكن / بتوكن مزوّر / بتوكن زبون على عملية أدمن
-//   3. يتحقق أن زبون B لا يستطيع رؤية طلب زبون A
-//
-// التشغيل:
-//   flutter test test/authorization_test.dart --reporter expanded
-
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -53,19 +44,25 @@ Future<_Res> _call(
     data = null;
   }
   // ignore: avoid_print
-  print('   $method $path  [${token == null ? 'no token' : 'token'}]'
-      '  ->  ${response.statusCode} ${data is Map && data['error'] is Map ? data['error']['code'] : ''}');
+  print(
+    '   $method $path  [${token == null ? 'no token' : 'token'}]'
+    '  ->  ${response.statusCode} ${data is Map && data['error'] is Map ? data['error']['code'] : ''}',
+  );
   return _Res(response.statusCode, data);
 }
 
 Future<_User> _registerCustomer(String label) async {
   final stamp = DateTime.now().microsecondsSinceEpoch;
-  final res = await _call('POST', ApiEndpoints.register, body: {
-    'name': 'Auth Test $label',
-    'email': 'authtest_${label}_$stamp@test.com',
-    'password': 'Password123',
-    'password_confirmation': 'Password123',
-  });
+  final res = await _call(
+    'POST',
+    ApiEndpoints.register,
+    body: {
+      'name': 'Auth Test $label',
+      'email': 'authtest_${label}_$stamp@test.com',
+      'password': 'Password123',
+      'password_confirmation': 'Password123',
+    },
+  );
   expect(res.status, anyOf(200, 201), reason: 'register $label failed');
   final data = res.body['data'];
   return _User(
@@ -84,8 +81,10 @@ void main() {
     a = await _registerCustomer('A');
     b = await _registerCustomer('B');
     // ignore: avoid_print
-    print('Customer A: id=${a.id}  ${a.email}\n'
-        'Customer B: id=${b.id}  ${b.email}');
+    print(
+      'Customer A: id=${a.id}  ${a.email}\n'
+      'Customer B: id=${b.id}  ${b.email}',
+    );
   });
 
   group('Authentication (401)', () {
@@ -106,8 +105,7 @@ void main() {
     });
 
     test('tampered token (A token with last chars changed) -> 401', () async {
-      final tampered =
-          '${a.token.substring(0, a.token.length - 4)}AAAA';
+      final tampered = '${a.token.substring(0, a.token.length - 4)}AAAA';
       final res = await _call('GET', ApiEndpoints.me, token: tampered);
       expect(res.status, 401);
     });
@@ -127,8 +125,12 @@ void main() {
 
   group('Role authorization (403)', () {
     test('customer cannot create a product (admin only) -> 403', () async {
-      final res = await _call('POST', ApiEndpoints.products,
-          token: a.token, body: {'name': 'hack', 'price': 1});
+      final res = await _call(
+        'POST',
+        ApiEndpoints.products,
+        token: a.token,
+        body: {'name': 'hack', 'price': 1},
+      );
       expect(res.status, 403);
       expect(res.errorCode, 'FORBIDDEN');
     });
@@ -143,28 +145,40 @@ void main() {
         return;
       }
 
-      final created = await _call('POST', ApiEndpoints.orders,
-          token: a.token,
-          body: {
-            'items': [
-              {'product_id': list.first['id'], 'quantity': 1},
-            ],
-          });
+      final created = await _call(
+        'POST',
+        ApiEndpoints.orders,
+        token: a.token,
+        body: {
+          'items': [
+            {'product_id': list.first['id'], 'quantity': 1},
+          ],
+        },
+      );
       expect(created.status, anyOf(200, 201));
       final int orderId = created.body['data']['id'];
 
-      final asOwner =
-          await _call('GET', ApiEndpoints.order(orderId), token: a.token);
+      final asOwner = await _call(
+        'GET',
+        ApiEndpoints.order(orderId),
+        token: a.token,
+      );
       expect(asOwner.status, 200);
 
-      final asOther =
-          await _call('GET', ApiEndpoints.order(orderId), token: b.token);
+      final asOther = await _call(
+        'GET',
+        ApiEndpoints.order(orderId),
+        token: b.token,
+      );
       expect(asOther.status, anyOf(403, 404));
 
       final listB = await _call('GET', ApiEndpoints.orders, token: b.token);
       final List ordersB = listB.body['data'] ?? [];
-      expect(ordersB.any((o) => o['id'] == orderId), isFalse,
-          reason: 'A\'s order must not appear in B\'s list');
+      expect(
+        ordersB.any((o) => o['id'] == orderId),
+        isFalse,
+        reason: 'A\'s order must not appear in B\'s list',
+      );
     });
   });
 }

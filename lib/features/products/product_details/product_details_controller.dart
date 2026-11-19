@@ -7,7 +7,6 @@ class ProductDetailsController extends GetxController {
   final int productId;
 
   ProductDetailsController({required this.productId, ProductModel? initial}) {
-    // نعرض بيانات المنتج القادمة من القائمة فوراً، ثم نحدّثها من السيرفر
     product.value = initial;
   }
 
@@ -17,7 +16,6 @@ class ProductDetailsController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = RxnString();
 
-  // المنتج حُذف أو غير موجود (404)
   var notFound = false.obs;
 
   @override
@@ -36,7 +34,6 @@ class ProductDetailsController extends GetxController {
       if (e.statusCode == 404) {
         notFound.value = true;
       } else if (product.value == null) {
-        // إن كانت لدينا نسخة من القائمة نكتفي بها ولا نعرض خطأ
         errorMessage.value = e.displayMessage;
       }
     } finally {

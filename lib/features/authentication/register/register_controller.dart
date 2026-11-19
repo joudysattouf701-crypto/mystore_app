@@ -30,7 +30,6 @@ class RegisterController extends GetxController {
 
       registerModel.value = result;
 
-      // الحساب الجديد يدخل مباشرة بالتوكن القادم مع التسجيل
       await AuthSession.to.start(
         accessToken: result.accessToken,
         user: result.user,

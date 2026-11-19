@@ -14,21 +14,18 @@ class NotificationsController extends GetxController {
       NotificationsListService();
   final MarkReadService _markReadService = MarkReadService();
 
-  // false يعني "الكل"
   var unreadOnly = false.obs;
 
   var notifications = <NotificationModel>[].obs;
   var isLoading = false.obs;
   var isLoadingMore = false.obs;
 
-  // رسالة فشل تحميل الصفحة الأولى، تظهر مع زر إعادة المحاولة
   var errorMessage = RxnString();
 
   int _page = 1;
   int _lastPage = 1;
   bool get hasMore => _page < _lastPage;
 
-  // رقم آخر طلب، حتى نتجاهل رد فلتر قديم إن بدّل الزبون الفلتر بسرعة
   int _requestId = 0;
 
   @override
@@ -43,7 +40,6 @@ class NotificationsController extends GetxController {
     fetchNotifications();
   }
 
-  // تحميل الصفحة الأولى من جديد (عند الفتح، وتبديل الفلتر، والسحب للتحديث)
   Future<void> fetchNotifications() async {
     final int request = ++_requestId;
 
@@ -70,7 +66,6 @@ class NotificationsController extends GetxController {
     }
   }
 
-  // الصفحة التالية عند الوصول لآخر القائمة
   Future<void> loadMore() async {
     if (isLoading.value || isLoadingMore.value || !hasMore) return;
     final int request = _requestId;
@@ -96,21 +91,16 @@ class NotificationsController extends GetxController {
     }
   }
 
-  // عند فتح الإشعار. يبقى في القائمة بشكل المقروء حتى لو كان الفلتر "غير المقروءة"
   Future<void> markAsRead(NotificationModel notification) async {
     if (notification.isRead) return;
 
     try {
-      MarkReadModel result = await _markReadService.markAsRead(
-        notification.id,
-      );
+      MarkReadModel result = await _markReadService.markAsRead(notification.id);
 
       final int index = notifications.indexWhere(
         (item) => item.id == notification.id,
       );
       if (index != -1) notifications[index] = result.notification;
-    } on ApiException {
-      // فشل التعليم لا يمنع الزبون من شيء، ويبقى الإشعار غير مقروء ليعاد لاحقاً
-    }
+    } on ApiException {}
   }
 }

@@ -5,7 +5,6 @@ import 'login_model.dart';
 class LoginService {
   final ApiClient _api = ApiClient.instance;
 
-  // تسجيل الدخول بالبريد الإلكتروني وكلمة المرور
   Future<LoginModel> login({
     required String email,
     required String password,

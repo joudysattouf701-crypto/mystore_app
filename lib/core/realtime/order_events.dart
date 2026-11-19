@@ -1,6 +1,5 @@
 import 'package:mystore/features/orders/order_model.dart';
 
-// حدث order.status_changed على قناة المستخدم
 class OrderStatusChangedEvent {
   final int orderId;
   final OrderStatus from;

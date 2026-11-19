@@ -12,7 +12,6 @@ class OrderDetailsController extends GetxController {
   final int orderId;
 
   OrderDetailsController({required this.orderId, OrderModel? initial}) {
-    // نعرض الطلب القادم من القائمة فوراً، ثم نجلب التفاصيل مع سجل الحالات
     order.value = initial;
   }
 
@@ -22,10 +21,8 @@ class OrderDetailsController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = RxnString();
 
-  // وصلت التفاصيل من السيرفر، فسجل الحالات أصبح متاحاً
   var isLoaded = false.obs;
 
-  // الطلب غير موجود أو لا يخص الزبون (404)
   var notFound = false.obs;
 
   RealtimeSubscription? _statusSub;
@@ -38,7 +35,6 @@ class OrderDetailsController extends GetxController {
     _listenRealtime();
   }
 
-  // التحميل الأول من REST (القاعدة 1)، والتحديثات من الـ WebSocket
   void _listenRealtime() {
     final int? userId = AuthSession.to.user.value?.id;
     if (userId == null) return;
@@ -48,20 +44,17 @@ class OrderDetailsController extends GetxController {
       _onStatusChanged,
     );
 
-    // الأحداث وقت الانقطاع لا تُعاد، فنعيد الـ GET عند رجوع الاتصال (القاعدة 2)
     _reconnectSub = RealtimeService.instance.onReconnected.listen(
       (_) => fetchOrder(silent: true),
     );
   }
 
   void _onStatusChanged(OrderStatusChangedEvent event) {
-    // قناة المستخدم تحمل أحداث كل طلباته، فنتجاهل أي طلب غير هذا (القاعدة 4)
     if (event.orderId != orderId) return;
 
     final OrderModel? current = order.value;
     if (current == null) return;
 
-    // نفس الحدث لو وصل مرتين لا يغيّر شيئاً (القاعدة 3)
     if (current.status == event.to) return;
 
     final List<OrderStatusChangeModel> history = [
@@ -79,7 +72,6 @@ class OrderDetailsController extends GetxController {
     );
   }
 
-  // silent: تحديث بالخلفية بدون مؤشر تحميل ولا رسائل خطأ
   Future<void> fetchOrder({bool silent = false}) async {
     try {
       if (!silent) {
@@ -102,7 +94,6 @@ class OrderDetailsController extends GetxController {
     }
   }
 
-  // إغلاق الاشتراك عند الخروج من الصفحة (القاعدة 5)
   @override
   void onClose() {
     _statusSub?.cancel();

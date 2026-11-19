@@ -5,7 +5,6 @@ import 'categories_model.dart';
 class CategoriesService {
   final ApiClient _api = ApiClient.instance;
 
-  // قائمة التصنيفات عامة لا تحتاج توكن. الرد: { data: [Category] }
   Future<List<CategoryModel>> getCategories() async {
     final response = await _api.get(
       ApiEndpoints.categories,

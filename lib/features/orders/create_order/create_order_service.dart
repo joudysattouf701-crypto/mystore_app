@@ -6,7 +6,6 @@ import 'create_order_model.dart';
 class CreateOrderService {
   final ApiClient _api = ApiClient.instance;
 
-  // نرسل رقم المنتج والكمية فقط، والسيرفر يجلب السعر من خدمة المنتجات
   Future<CreateOrderModel> createOrder(List<CartItemModel> items) async {
     final response = await _api.post(
       ApiEndpoints.orders,

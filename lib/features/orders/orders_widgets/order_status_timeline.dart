@@ -4,7 +4,6 @@ import 'package:mystore/features/orders/order_model.dart';
 import 'package:flutter/material.dart';
 import 'order_status_badge.dart';
 
-// مسار الطلب: إنشاؤه ثم كل تغيير في حالته من الأقدم للأحدث
 class OrderStatusTimeline extends StatelessWidget {
   final OrderModel order;
 
@@ -42,7 +41,6 @@ class OrderStatusTimeline extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // الدائرة بلون الحالة، والخط يصلها بالخطوة التالية
           Column(
             children: [
               Container(

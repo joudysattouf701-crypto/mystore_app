@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// لمعان متحرك يمر على مربعات التحميل، فيعرف الزبون شكل المحتوى القادم
 class Shimmer extends StatefulWidget {
   final Widget child;
 
@@ -31,7 +30,6 @@ class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
       animation: _controller,
       builder: (context, child) => ShaderMask(
         blendMode: BlendMode.srcATop,
-        // شريط فاتح يعبر المربعات من طرف لآخر
         shaderCallback: (bounds) => LinearGradient(
           begin: Alignment(-3 + 4 * _controller.value, 0),
           end: Alignment(-1 + 4 * _controller.value, 0),
@@ -44,7 +42,6 @@ class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
   }
 }
 
-// مربع رمادي بحواف دائرية داخل Shimmer
 class SkeletonBox extends StatelessWidget {
   final double? width;
   final double? height;

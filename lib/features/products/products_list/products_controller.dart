@@ -39,7 +39,7 @@ class ProductsController extends GetxController {
   Future<void> loadCategories() async {
     try {
       categories.value = await _categoriesService.getCategories();
-    } on ApiException {}
+    } on ApiException catch (_) {}
   }
 
   void selectCategory(int? categoryId) {

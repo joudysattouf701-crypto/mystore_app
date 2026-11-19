@@ -55,7 +55,7 @@ class AuthSession extends GetxService {
         return;
       }
       await updateUser(fresh);
-    } on ApiException {}
+    } on ApiException catch (_) {}
   }
 
   Future<void> logout() => _end();

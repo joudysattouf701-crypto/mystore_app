@@ -101,6 +101,6 @@ class NotificationsController extends GetxController {
         (item) => item.id == notification.id,
       );
       if (index != -1) notifications[index] = result.notification;
-    } on ApiException {}
+    } on ApiException catch (_) {}
   }
 }
